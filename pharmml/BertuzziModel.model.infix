@@ -1,194 +1,43 @@
-## Bertuzzi's beta cell model, as described in  Alessandro Bertuzzi,
-## Serenella Salinari and Geltrude Mingrone "Insulin granule trafficking in
-## β-cells: mathematical model of glucose-induced insulin secretion" Am J
-## Physiol Endocrinol Metab 293:E396-E409, 2007.
-##  doi:10.1152/ajpendo.00647.2006.
-
-##————————————————————————————————————————————
-
-
-
-
-
-
-## State Variables (Equation Number Where Quantities First Appear)
-
-## I Pool of proinsulin aggregates (Eq. 1)
-## V Pool of granule membrane material (Eq. 1)
-## R Reserve pool (Eq. 3)
-## D Pool of docked granules (Eq. 4)
-## DIR Pool of immediately releasable granules (Eq. 4)
-## F Pool of granules fused with plasma membrane (Eq. 6)
-## gamma_rate Rate coefficient of granule externalization and priming, related to the ATP-to-ADP ratio (min^-1) (Eq. 3)
-## rho  rho Rate coefficient of granule fusion with cell membrane, related to [Ca2+]i (min^-1) (Eq. 5)
-
-## Initial values
 
 init I=10
 init V=10
 init R=10000
 init D=950
 init DIR=50
-
 F(0)=3.33e-2
-#init F=3.33e-2
-
-# Uncomment to Figure 5-6
  gamma_rate(0)=0
-# Uncomment to Figure 5-6A
  rho(0)=0
-
-
-
-
-
-
     
-## Parameters in the Equations of Granule Dynamics
-
-# k Rate constant of formation of proinsulin-containing granules in trans-Golgi network (min^-1) (Eq. 1)
 par k=1e-2
-# bI Biosynthesis rate of proinsulin aggregates at a given glucose coentration (min^-1) (Eq. 1)
-# To reproduce figure 6 A, 6 B bI=88 
 par bI=4
-
-
-# alpha_I Rate constant of degradation of proinsulin aggregates (min^-1) (Eq. 1)
 par alpha_I=0.3
-# bV Rate of biosynthesis of granule membrane material (min^-1) (Eq. 2)
 par bV=6
-# alpha_V Rate constant of degradation of granule membrane material (min^-1) (Eq. 2)
 par alpha_V=2*alpha_I
-# tau_V Time delay related to recycling of granule membrane material (min) (Eq. 2)
 par tau_V=5
-# CT Pool of total Ca2+ channels (Eq. 4)
 par CT=500
-# k1p + Rate constant of association for the binding between granule and Ca2+ channel (min^-1) (Eq. 4)
 par k1p=1.447e-5
-# k1m - Rate constant of dissociation for the binding between granule and Ca2+ channel (min^-1) (Eq. 4)
 par k1m=0.10375
-# sigma Rate constant of insulin release from granules fused with cell membrane (min^-1) (Eq. 2)
  par sigma=30
-# Uncomment to figure 7 B
-# par sigma=3
-
-
-## Additional Parameters and Functions
-
-# I0 Insulin amount contained in a granule (amol) (Eq. 11)
 par I0=1.6
-# Nc Average number of β-cells in an islet (Eq. 11)
 par Nc=1000
-# Ni Number of islets in pancreas (Eq. 11)
 par Ni=1
-# N Total number of β-cells in pancreas (Eq. 17)
 par N=2.76e6
-# fb Basal value of the fraction f (Eq. A5)
 par fb=0.05
-# Kf Parameter in the function f(G) (mmol/l) (Eq. A5)
 par Kf=3.43
-
-# VG Glucose distribution volume (liters) (Eq. C1)
-# VC Volume of C-peptide accessible compartment (liters) (Eq. 17)
-# Q Cardiac output (l/min) (Eq. C1)
-# SI Insulin sensitivity index [l min^-1 (pmol/l)^-1] (Eq. C1)
-# Sd Dynamic responsivity index (Eq. 17)
-# Ss Static responsivity index (min^-1) (Eq. 18)
-# a, b Parameters in the approximate expression of the first-phase ISR (min^-1) (Eq. A1)
-# xb Denotes the basal value of the generic variable x
-# x_bar Denotes the steady-state value of the variable x
-
  
-## Parameters and Functions in the Equations Representing Stimulus-secretion Coupling
-
-# eta Rate constant in the equation for gamma_rate (min^-1) (Eq. 7)
 par eta=4
-# gamma_b Basal value of gamma_rate (min^-1) (Eq. 7)
 par gamma_b=1e-4
-# tau_G Time delay related to time required by glucose metabolism for activation of gamma_rate (min) (Eq. 7)
 par tau_G=1
-# G_star Glucose concentration threshold for the activation of gamma_rate (mmol/l) (Eq. 8)
 par G_star=4.58
-# h_hat Maximal value of hgamma (min^-1) (Eq. 8)
  par h_hat=3.93e-3
-# Uncomment to figure 7 B
-# par h_hat=2e-3
-# G_hat Glucose concentration over which hgamma remains constant and equal to h  (mmol/l) (Eq. 8)
 par G_hat=10
-# zeta Rate constant in the equation for rho (min^-1) (Eq. 9)
-# Uncomment to figure 3
-#par zeta=1
-
 par zeta=4
-# rho_b Basal value of rho (min^-1) (Eq. 9)
 par rho_b=0.02
-# k_rho Parameter representing the sensitivity of rho on the activatory action of gamma_rate (Eq. 10)
  par k_rho=350
-# Uncomment to figure 7 B
-# par k_rho=70
-# rho_hat Parameter representing the magnitude of imposed calcium signal (min^-1) (Eq. 16)
 par rho_hat=1
-# s_rho Parameter related to the ascending part of imposed calcium signal (min^-2) (Eq. 16)
 par s_rho=4e-3
-
-##———————————————————
-##——————————————————-
-#Additional functions
-
-# psi Oscillatory function that represents events inducing oscillations in gamma (min^-1) (Eq. 7)
-
-# Uncomment to figure 3, 5, 6A, 7A
  psi_fun(t)=0*heav(t)
  psi=psi_fun(t)
-
-# Uncomment to figure 6 B, 7 B
-# Tp (period of the periodic curve)  (min^-1)
-# par Tp=10 
-# omega=Tp/(2*pi)
-# par phi=0
-# psi_fun(t)=1/2*hgamma*sin(omega*t+phi)
-# psi=psi_fun(t)
-
- aux psi_out=psi_fun(t)
-
-
-
-##———————————————————
-##——————————————————-
-# Additional functions to Figure 3
-
-# fs Fraction of beta-cells responding to glucose stimulus (function of glucose concentration G) (Eq. 11)
-# fs_fun(t)=1*heav(t)
-# fs=fs_fun(t)
-
-
-# rho_fun Function that reflects the time course of calcium 
-#  par t1=2
-#  rho_fun(t)=if(t<t1)then(rho_b)else(rho_b+rho_hat*(1-exp(-zeta*(t-t1)))+s_rho*(t-t1))
-# rho=rho_fun(t)
-# aux rho_out=rho_fun(t)
-
-
-# calculation of gamma_rate
-# gamma_fun(t)=gamma_b*heav(t)
-# gamma_rate=gamma_fun(t)
-# aux gamma_out=gamma_fun(t)
-
-
-
-##———————————————————
-##———————————————————
-## Glucose input - depends on the experiment
-
-# Basal secretion - Glucose constant at 3 mM
-#par G_max=3
-#G_fun(t)=G_max*heav(t)
-#G=G_fun(t)
-
-#aux G_fun_out=G_fun(t)
-
-# Glucose to Figure 5 B, 6 A, 6 B - step glucose
-
 
  par t1=90
  par G_max=16.7
@@ -196,191 +45,36 @@ par s_rho=4e-3
  G_fun(t)=G_min+(G_max-G_min)*heav(t-t1)
  G=G_fun(t)
 
-
-aux G_fun_out=G_fun(t)
-
-##———————————————————
-# Glucose to Figure 5 C - Potentiation effect
-
-# par Grest=1.0, Gburst=16.7
-# par tstep=2.0, tstim=60.0, tgap=5
-
-# G_fun(t) = Grest + (Gburst - Grest)*(heav(t - tstep) - heav(t - (tstep + tstim)) + heav(t - (tstep + tstim + tgap)))
-# G=G_fun(t)
-
-# aux G_fun_out=G_fun(t)
-
-
-##———————————————————
-# Glucose to Figure 5 D - Ramp glucose
-
-# par tstep=2.0, tmaxG=60.0
-# par Grest=1.0, Gburst=16.7
-
-# G_fun(t) = Grest + max(0, min( (Gburst - Grest)*(t - tstep)/(tmaxG - tstep), Gburst - Grest) )
-# G=G_fun(t)
-
-# aux G_fun_out=G_fun(t)
-
-
-
-##-------------------
-# Staircase Glucose
-#
-# G_fun(t)=if(t<10)then(4)else(if(t<25)then(7)else(if(t<40)then(10)else(if(t<55)then(15)else(if(t<70)then(20)else(30)))))
-# G=G_fun(t)
-
-# aux G_fun_out=G_fun(t)
-
-
-##———————————————————
-##———————————————————
-# Additional function to Figure 5
-
-
-# fs Fraction of beta-cells responding to glucose stimulus (function of glucose concentration G) (Eq. 11)
  fs_fun(G_fun)=if(G_fun<G_star)then(fb)else(fb+(1-fb)*(G_fun-G_star)/(Kf+G_fun-G_star))
  fs=fs_fun(G_fun(t))
 
- aux fs_out=fs_fun(G_fun(t))
  
-
-
  hgamma_fun Function of G representing the activatory action of glucose on gamma_rate (min^-1) (Eq. 8) 
  hgamma_fun(G_fun)=if(G_fun<=G_star)then(0)else(if(G_fun<=G_hat)then(h_hat*(G_fun-G_star)/(G_hat-G_star))else(h_hat))
  hgamma=hgamma_fun(G_fun(t-tau_G))
- aux hgamma=hgamma
-
-# aux hgamma_out=hgamma_fun(G_fun(t))
 
   
-# hrho Function of gamma_rate representing the activatory action of ATP on calcium (min^-1) (Eq. 10)
  hrho(gamma_rate)=if(gamma_rate<gamma_b)then(0)else(k_rho*(gamma_rate-gamma_b)) 
 
- aux hrho_out=hrho(gamma_rate)   
-
-
-
-##———————————————————
-##———————————————————
-
-# Additional function to figure 6 B
-# rho_fun(t)=2*heav(t-t1)
-# rho=rho_fun(t)
-
-# aux rho_out=rho_fun(t)
-
-
-
-## Differential equations
-
-
-# Equation (1)
     I' = -k*I*V-alpha_I*I+bI                 
-
-# Equation (2)
    V' = -k*I*V-alpha_V*V+bV+sigma*(delay(F,tau_V))
-#   V' = -k*I*V-alpha_V*V+bV+sigma*(F)      
  
-
-# Equation (3)
     R' = k*I*V-gamma_rate*R   
                        
-# Equation (4)
     D' = gamma_rate*R-k1p*(CT-DIR)*D+k1m*DIR 
          
-# Equation (5)
     DIR' = k1p*(CT-DIR)*D-k1m*DIR-rho*DIR        
-
-# Equation (6)
    F' = rho*DIR-sigma*F        
-# Uncomment to find steady state
-# F_fun(t)=(1/sigma)*heav(t)
-# F=F_fun(t)
-
-# Equation (7) - Uncomment to Figure 5-6A-7
 gamma_rate' = eta*(-gamma_rate+gamma_b+psi+hgamma)
-
-
-# Equation (9) - Uncomment to Figure 5-6-7
 rho' = zeta*(-rho+rho_b+hrho(gamma_rate))   
-
-##------------------------
-
 Vd=(delay(F,tau_V))   
-aux Vd_out=Vd
 
-
-
-##———————————————————
-##———————————————————
-# Calculation of ISR
-
-# Uncomment to Figure 3
     
-# ISR (amol/min) - Eq. 11
-# ISR=F*I0*sigma*Ni*Nc*fs
-
-# aux ISR_out=ISR
-
-
-# ISR_pg in pg/min if ISR is in amol
-# ISR_pg=ISR*5807/1e6
-# aux ISR_pg_out=ISR_pg
-
-##--------------------
-##--------------------
-
-# Uncomment to evaluate the secretion of a single islet
-
-# ISR (amol/min) - Eq. 11
-# ISR=F*I0*sigma*Ni*Nc*fs
-
-# aux ISR_out=ISR
-
-# ISR_pg in pg/min if ISR is in amol
-# ISR_pg=ISR*5807/1e6
-# aux ISR_pg_out=ISR_pg
-
-
-
-
-# Uncomment to Figure 5 6 7 - N is the number of beta cells estimated in the entire rat pancreas
-
- # ISR (amol/min) - Eq. 11
+ 
   ISR=F*I0*sigma*N*fs
 
-   aux ISR_out=ISR
-
- # ISR_ug in ug/min if ISR is in amol
+ 
   ISR_ug=ISR*5807/1e12
-  aux ISR_ug_out=ISR_ug
 
-
-
-
-##———————————————————
-##———————————————————
-
-
-## Additional Variables (unused)
-
-## C Pool of unbound L-type Ca2+ channels
-## G Extracellular glucose concentration (input variable) (mmol/l) (Eq. 7)
-## ISR Insulin secretion rate (The paper says pmol/min however ISR from the formula is amol/min) (Eq. 11)
-## IS Insulin amount secreted in a time T during the first-phase response (pmol) (Eq. A4)
-## Gm Measured plasma glucose concentration (mmol/l) (Eq. C1)
-## Ip Measured plasma insulin concentration (pmol/l) (Eq. C1)
-## Ga Estimated arterial glucose concentration (mmol/l) (Eq. C1)
-
-
-@ total=3600
-@ bounds=10e10
-@ delay=10
-@ yp=isr_ug_out
 
 done
-
-
-
-
