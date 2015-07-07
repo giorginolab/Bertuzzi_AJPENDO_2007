@@ -5,9 +5,9 @@ init R=10000
 init D=950
 init DIR=50
 F(0)=3.33e-2
- gamma_rate(0)=0
- rho(0)=0
-    
+gamma_rate(0)=0
+rho(0)=0
+
 par k=1e-2
 par bI=4
 par alpha_I=0.3
@@ -17,64 +17,62 @@ par tau_V=5
 par CT=500
 par k1p=1.447e-5
 par k1m=0.10375
- par sigma=30
+par sigma=30
 par I0=1.6
 par Nc=1000
 par Ni=1
 par N=2.76e6
 par fb=0.05
 par Kf=3.43
- 
+
 par eta=4
 par gamma_b=1e-4
 par tau_G=1
 par G_star=4.58
- par h_hat=3.93e-3
+par h_hat=3.93e-3
 par G_hat=10
 par zeta=4
 par rho_b=0.02
- par k_rho=350
+par k_rho=350
 par rho_hat=1
 par s_rho=4e-3
- psi_fun(t)=0*heav(t)
- psi=psi_fun(t)
+psi_fun(t)=0*heav(t)
+psi=psi_fun(t)
 
- par t1=90
- par G_max=16.7
- par G_min=1
- G_fun(t)=G_min+(G_max-G_min)*heav(t-t1)
- G=G_fun(t)
+par t1=90
+par G_max=16.7
+par G_min=1
+G_fun(t)=G_min+(G_max-G_min)*heav(t-t1)
+G=G_fun(t)
 
- fs_fun(G_fun)=if(G_fun<G_star)then(fb)else(fb+(1-fb)*(G_fun-G_star)/(Kf+G_fun-G_star))
- fs=fs_fun(G_fun(t))
+fs_fun(G_fun)=if(G_fun<G_star)then(fb)else(fb+(1-fb)*(G_fun-G_star)/(Kf+G_fun-G_star))
+fs=fs_fun(G_fun(t))
 
- 
- hgamma_fun Function of G representing the activatory action of glucose on gamma_rate (min^-1) (Eq. 8) 
- hgamma_fun(G_fun)=if(G_fun<=G_star)then(0)else(if(G_fun<=G_hat)then(h_hat*(G_fun-G_star)/(G_hat-G_star))else(h_hat))
- hgamma=hgamma_fun(G_fun(t-tau_G))
 
-  
- hrho(gamma_rate)=if(gamma_rate<gamma_b)then(0)else(k_rho*(gamma_rate-gamma_b)) 
+hgamma_fun Function of G representing the activatory action of glucose on gamma_rate (min^-1) (Eq. 8) 
+hgamma_fun(G_fun)=if(G_fun<=G_star)then(0)else(if(G_fun<=G_hat)then(h_hat*(G_fun-G_star)/(G_hat-G_star))else(h_hat))
+hgamma=hgamma_fun(G_fun(t-tau_G))
 
-    I' = -k*I*V-alpha_I*I+bI                 
-   V' = -k*I*V-alpha_V*V+bV+sigma*(delay(F,tau_V))
- 
-    R' = k*I*V-gamma_rate*R   
-                       
-    D' = gamma_rate*R-k1p*(CT-DIR)*D+k1m*DIR 
-         
-    DIR' = k1p*(CT-DIR)*D-k1m*DIR-rho*DIR        
-   F' = rho*DIR-sigma*F        
+
+hrho(gamma_rate)=if(gamma_rate<gamma_b)then(0)else(k_rho*(gamma_rate-gamma_b)) 
+
+I' = -k*I*V-alpha_I*I+bI                 
+V' = -k*I*V-alpha_V*V+bV+sigma*(delay(F,tau_V))
+
+R' = k*I*V-gamma_rate*R   
+
+D' = gamma_rate*R-k1p*(CT-DIR)*D+k1m*DIR 
+
+DIR' = k1p*(CT-DIR)*D-k1m*DIR-rho*DIR        
+F' = rho*DIR-sigma*F        
 gamma_rate' = eta*(-gamma_rate+gamma_b+psi+hgamma)
 rho' = zeta*(-rho+rho_b+hrho(gamma_rate))   
 Vd=(delay(F,tau_V))   
 
-    
- 
-  ISR=F*I0*sigma*N*fs
-
- 
-  ISR_ug=ISR*5807/1e12
 
 
-done
+ISR=F*I0*sigma*N*fs
+
+
+ISR_ug=ISR*5807/1e12
+
