@@ -36,20 +36,20 @@ par rho_b=0.02
 par k_rho=350
 par rho_hat=1
 par s_rho=4e-3
-psi_fun(t)=0*heav(t)
-psi=psi_fun(t)
+
+psi=0
 
 par t1=90
 par G_max=16.7
 par G_min=1
-G_fun(t)=G_min+(G_max-G_min)*heav(t-t1)
+G_fun(t)=G_min+(G_max-G_min)*Heaviside(t-t1)
 G=G_fun(t)
 
 fs_fun(G_fun)=if(G_fun<G_star)then(fb)else(fb+(1-fb)*(G_fun-G_star)/(Kf+G_fun-G_star))
 fs=fs_fun(G_fun(t))
 
 
-hgamma_fun Function of G representing the activatory action of glucose on gamma_rate (min^-1) (Eq. 8) 
+
 hgamma_fun(G_fun)=if(G_fun<=G_star)then(0)else(if(G_fun<=G_hat)then(h_hat*(G_fun-G_star)/(G_hat-G_star))else(h_hat))
 hgamma=hgamma_fun(G_fun(t-tau_G))
 

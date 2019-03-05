@@ -1,0 +1,28 @@
+<!-- −x if x < 0 -->
+<!-- x  if x ≥ 0 -->
+
+<Equation xmlns="http://www.ddmore.eu/pharmml/0.6/Maths/"/>
+<!-- Omitted namespace declarations -->
+<Piecewise>
+  <Piece>
+    <Uniop op="minus">
+      <ct:SymbRef symbIdRef="x"/>
+    </Uniop>
+    <Condition>
+      <LogicBinop op="lt">
+	<ct:SymbRef symbIdRef="x"/>
+	<ct:Int>0</ct:Int>
+      </LogicBinop>
+    </Condition>
+  </Piece>
+  <Piece>
+    <ct:SymbRef symbIdRef="x"/>
+    <Condition>
+      <LogicBinop op="geq">
+	<ct:SymbRef symbIdRef="x"/>
+	<ct:Real>0</ct:Real>
+      </LogicBinop>
+    </Condition>
+  </Piece>
+</Piecewise>
+</Equation>
